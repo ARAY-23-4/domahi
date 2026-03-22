@@ -1,0 +1,246 @@
+import React, { useState } from 'react';
+import { Search, MapPin, Calendar, Users, Star, ShieldCheck, UserCheck, Bookmark, CheckCircle2, Sparkles } from 'lucide-react';
+
+// Sabhi committee members ka data yahan store kiya gaya hai
+const committeeData = [
+  { group: 'Advisors', category: 'Chief Advisor', members: ['Pabitra Engti - Additional Chief Engineer Irrigation /KAAC Diphu'] },
+  { group: 'Advisors', category: 'Advisor', members: ['Sar Tuleswar Ronghang', 'Sar Haladhar Engti', 'Sar Dhiren Ronghang', 'Sar Pandit Engti', 'Sangpi Ranjeeta Teronpi', 'Sar Chikan kro', 'Sar Bakul Kro', 'Sar Dhani Ram Ronghang', 'Sar Hari Charan Timung', 'Sar Uma Kt. Teron', 'Sar Kesob Terang - KCS, CC', 'Sar Dhan Sing Terang - Bidisar, KLA, Tiripi', 'Sar Harinath Ronghang - Retired ACF', 'Sar Kehai Timung - KCS, CC', 'Sar Madhuram Lakthe EM, КААС'] },
+  { group: 'Core', category: 'Executive President', members: ['Sar Lalit ch. Teron'] },
+  { group: 'Core', category: 'Vice President', members: ['Sar Birat Ronghang', 'Sar Rinku Engti', 'Sar Bikhya Teron - SGB'] },
+  { group: 'Core', category: 'Secretary', members: ['Sar Joy Dev Timung'] },
+  { group: 'Core', category: 'Assistant Secretary', members: ['Sar Nilutpal Teron'] },
+  { group: 'Core', category: 'Office Secretary', members: ['Sar Sudipta Ronghang', 'Sangpi Junali Beypi'] },
+  { group: 'Sub-Committees', category: 'Finance Sub-Committee', members: ['Sar Aryan Bora', 'Sar Subrata Teron'] },
+  { group: 'Sub-Committees', category: 'Fooding Sub-Committee', members: ['Sar Darsing Rongpi - Chairman VDC Langpher', 'Sar Alip Sing Teron', 'Sar Maditya Engti', 'Sar Arup Ronghang', 'Sar Sarpo Engti Kathar - Ranger Northern Range Bakalia', 'Sar Nirmal Ronghang', 'Sar Uttam Deori - Chairman Kasomari Lamps', 'Sar Indra Tokbi - Chairman Bakalia Lanmps', 'Sar Siva Enghi - Rajapathar Lamps Chairman', 'Sar Ramu Kro', 'Sar Madhav Teron', 'Sar Goutam Teron'] },
+  { group: 'Sub-Committees', category: 'Cultural Sub-Committee', members: ['Sar Rajani Enghi', 'Sar Rabiram Tokbi', 'Sar Dipjyoti Teron', 'Sami Mousumi Bora', 'Sami Pronamika Engtipi', 'Sami Binita Teronpi', 'Sar Dibakar Timung'] },
+  { group: 'Sub-Committees', category: 'Pandal Sub-Committee', members: ['Sar Subhan Kro - Assistant Architect, KAAC Diphu', 'Sar Naba Kt. Ronghang', 'Sar Binoy Enghi', 'Sar Rong bong Terang', 'Sar Ranju Teron', 'Sar Dibakar Timung'] },
+  { group: 'Sub-Committees', category: 'Sound and Light Sub-Committee', members: ['Sar Siva Ram Engti', 'Sar Minal Kro', 'Sar Padma Timung', 'Sar Sumit Engti'] },
+  { group: 'Sub-Committees', category: 'Water Supply Sub-Committee', members: ['Sar Baliram Ronghang', 'Sar Riju Teron', 'Sar Midul Ronghang', 'Sar Baishnov Teron', 'Sar Bikash Engti'] },
+  { group: 'Sub-Committees', category: 'Medical Sub-Committee', members: ['Sar Jiten ch. Ronghang', 'Sar Moromi Teronpi', 'Sar Aditya Engti', 'Sar Jugal Kishor Timung', 'Sar Simanta Timung'] },
+  { group: 'Sub-Committees', category: 'Publicity Sub-Committee', members: ['Sar Raju Kro - Additional Secretary', 'Dr. Avinash Timung - Veterinary Manager, Phuloni', 'Prakash Bordoloi', 'Sar Swapan Teron', 'Sar Ranjan Ronghang'] },
+  { group: 'Sub-Committees', category: 'Volunteer Sub-Committee', members: ['Sar Prasanta Timung', 'Sar Anshuman Kro', 'Sar Dilip Teron', 'Sar Parthajit Teron', 'Sar Prasanta Engti', 'Sar Suren Timung', 'Sar Diganta Teron', 'Sar Atal Subhas Teron'] },
+  { group: 'Sub-Committees', category: 'Gate Sub-Committee', members: ['Sar Momin Kro', 'Sar Dipankar Tokbi', 'Sar Deben Engti', 'Sar Joy Sing Singnar'] },
+  { group: 'Sub-Committees', category: 'Accomodation Sub-Committee', members: ['Sar Hemsing Teron - Chairman, BMB', 'Sami Anita Saikia - Vice Chair Person BMB', 'Sar Jitu Engti', 'Sar Tinku Engti', 'Sar Himanta Teron', 'Sar Sona sing', 'Sar Nitu Timung', 'Sar Amlan Kro', 'Sar Basanta Ronghang', 'Sar Mangal sing Ronghang'] },
+  { group: 'Members', category: 'Members', members: ['Sar Padmu Knowar', 'Sar Arimdrom Kro', 'Sar Arpon Enghi', 'Sami Neha Moni Engtipi', 'Sami Rupali Engtipi', 'Sami Kakuli Teronpi', 'Sami Humsira Teronpi', 'Sami Joya Timungpi', 'Sar Vivek Kro', 'Sar Anjan Timung', 'Sar Bhagadutta Teron', 'Sar Nayan Jyoti Teron', 'Sar Mukul Engti', 'Sar Ajay Ronghang', 'Sar Satyajit Engti', 'Sar Dilip Teron', 'Sar Debo Kanta Ronghang', 'Sar Pulak Timung', 'Sar Rakesh Teron'] }
+];
+
+// Initials nikalne ka function (ex: Sar Tuleswar Ronghang -> TR)
+const getInitials = (fullName) => {
+  let cleanName = fullName.replace(/^(Sar |Sami |Sangpi |Dr\. )/i, '').trim();
+  let parts = cleanName.split(' ');
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return cleanName.substring(0, 2).toUpperCase();
+};
+
+// Har naam ke hisaab se ek sundar color dene ka logic
+const getAvatarColor = (name) => {
+  const colors = [
+    'bg-gradient-to-br from-blue-400 to-indigo-500',
+    'bg-gradient-to-br from-emerald-400 to-teal-500',
+    'bg-gradient-to-br from-rose-400 to-red-500',
+    'bg-gradient-to-br from-purple-400 to-pink-500',
+    'bg-gradient-to-br from-amber-400 to-orange-500',
+  ];
+  let sum = 0;
+  for (let i = 0; i < name.length; i++) {
+    sum += name.charCodeAt(i);
+  }
+  return colors[sum % colors.length];
+};
+
+export default function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Search input ke hisaab se data filter karne ka logic
+  const filteredData = committeeData.map(section => {
+    const matchesCategory = section.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchedMembers = section.members.filter(member => 
+      member.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (matchesCategory) {
+      return section;
+    }
+    return { ...section, members: matchedMembers };
+  }).filter(section => section.members.length > 0);
+
+  // Group ke hisaab se premium style return karne ka function
+  const getGroupStyle = (group) => {
+    switch (group) {
+      case 'Advisors': return { icon: <Star className="w-6 h-6 text-amber-500" />, bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700' };
+      case 'Core': return { icon: <ShieldCheck className="w-6 h-6 text-purple-500" />, bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700' };
+      case 'Sub-Committees': return { icon: <Users className="w-6 h-6 text-blue-500" />, bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700' };
+      case 'Members': return { icon: <UserCheck className="w-6 h-6 text-emerald-500" />, bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700' };
+      default: return { icon: <Bookmark className="w-6 h-6 text-slate-500" />, bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700' };
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-800 pb-16 selection:bg-indigo-100 selection:text-indigo-900">
+      
+      {/* Premium Hero Section */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-950 via-purple-900 to-indigo-800 pt-20 pb-32 px-4 sm:px-6 shadow-2xl">
+        {/* Background Decorative Circles */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-30 pointer-events-none">
+          <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[70%] rounded-full bg-gradient-to-br from-purple-400 to-indigo-300 blur-3xl mix-blend-overlay"></div>
+          <div className="absolute top-[30%] -right-[10%] w-[40%] h-[60%] rounded-full bg-gradient-to-bl from-pink-400 to-orange-300 blur-3xl mix-blend-overlay"></div>
+        </div>
+
+        <div className="relative z-10 max-w-5xl mx-auto text-center space-y-8">
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-blue-100 text-sm font-bold tracking-widest uppercase mb-4 shadow-lg">
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            Swagat Samiti (Reception Committee)
+          </div>
+          
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-blue-200 drop-shadow-sm">
+            31<sup>st</sup> DOMAHI ARONG AJI <br className="hidden md:block" /> 
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-orange-300"> 2026</span>
+          </h1>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mt-10 text-sm md:text-base font-medium text-indigo-50 bg-black/30 p-5 rounded-3xl border border-white/10 w-max mx-auto backdrop-blur-md shadow-xl">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-white/10 rounded-xl"><Calendar className="w-5 h-5 text-amber-300" /></div>
+              <span>26<sup>th</sup> - 28<sup>th</sup> April 2026</span>
+            </div>
+            <div className="hidden sm:block w-px h-10 bg-white/20"></div>
+            <div className="flex items-center gap-3 max-w-xs sm:max-w-md text-left">
+              <div className="p-2.5 bg-white/10 rounded-xl"><MapPin className="w-5 h-5 text-rose-300" /></div>
+              <span className="leading-snug">Dharamtul Manik Teron Aklam, Richo Hidi, Karbi Anglong</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 -mt-16 relative z-20">
+        
+        {/* Floating Glassmorphic Search Bar */}
+        <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-2 sm:p-3 mb-16 border border-white/60">
+          <div className="relative flex items-center bg-slate-100/50 rounded-3xl overflow-hidden focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-500 transition-all duration-300">
+            <div className="pl-6 pointer-events-none">
+              <Search className="h-6 w-6 text-indigo-500" />
+            </div>
+            <input
+              type="text"
+              className="block w-full pl-4 pr-6 py-5 bg-transparent border-none text-slate-800 placeholder-slate-400 focus:ring-0 text-lg outline-none font-medium"
+              placeholder="Sadasya ka naam ya unka role (pad) dhundhein..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="pr-6 text-slate-400 hover:text-rose-500 font-bold text-sm transition-colors uppercase tracking-wider"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Results / List Section */}
+        {filteredData.length === 0 ? (
+          <div className="text-center py-32 bg-white rounded-3xl border border-slate-100 shadow-sm">
+            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Users className="w-10 h-10 text-slate-300" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-700">Koi bhi data nahi mila</h3>
+            <p className="text-slate-500 mt-2 text-lg">Kripya koi dusra naam ya role search karein.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-10">
+            {filteredData.map((section, index) => {
+              const style = getGroupStyle(section.group);
+              
+              return (
+                <div 
+                  key={index} 
+                  className="bg-white rounded-[2rem] overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500"
+                >
+                  {/* Card Header */}
+                  <div className={`px-6 py-8 sm:px-10 border-b border-slate-100/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${style.bg} bg-opacity-30`}>
+                    <div className="flex items-center gap-5">
+                      <div className={`p-4 bg-white rounded-2xl shadow-sm border ${style.border}`}>
+                        {style.icon}
+                      </div>
+                      <div>
+                        <span className={`text-sm font-bold uppercase tracking-widest ${style.text} mb-1.5 block`}>
+                          {section.group}
+                        </span>
+                        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">
+                          {section.category}
+                        </h2>
+                      </div>
+                    </div>
+                    <div className="inline-flex items-center justify-center px-5 py-2 bg-white rounded-full text-sm font-bold text-slate-600 shadow-sm border border-slate-200 w-max">
+                      {section.members.length} {section.members.length === 1 ? 'Sadasya' : 'Sadasya'}
+                    </div>
+                  </div>
+                  
+                  {/* Card Body (Grid of Members) */}
+                  <div className="p-6 sm:p-10 bg-gradient-to-b from-white to-slate-50/50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                      {section.members.map((member, mIndex) => {
+                        const [name, ...designationParts] = member.split(' - ');
+                        const designation = designationParts.join(' - ');
+                        const initials = getInitials(name);
+                        const avatarColor = getAvatarColor(name);
+
+                        return (
+                          <div 
+                            key={mIndex} 
+                            className="group flex items-center p-4 rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:border-indigo-300 hover:shadow-md transition-all duration-300 relative overflow-hidden"
+                          >
+                            {/* Hover accent line */}
+                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            
+                            {/* Colorful Avatar */}
+                            <div className={`w-14 h-14 shrink-0 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-inner border-2 border-white ${avatarColor} mr-4`}>
+                              {initials}
+                            </div>
+                            
+                            {/* Member Details */}
+                            <div className="flex-1 min-w-0 pr-2">
+                              <p className="font-bold text-slate-800 text-[17px] truncate group-hover:text-indigo-700 transition-colors">
+                                {name.trim()}
+                              </p>
+                              {designation ? (
+                                <p className="text-sm text-slate-500 mt-1 font-medium truncate flex items-center gap-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                                  {designation.trim()}
+                                </p>
+                              ) : (
+                                <p className="text-sm text-slate-400 mt-1 font-medium truncate flex items-center gap-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                                  Committee Member
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      
+      {/* Premium Footer */}
+      <footer className="mt-24 border-t border-slate-200 bg-white py-12">
+        <div className="max-w-5xl mx-auto px-4 flex flex-col items-center justify-center text-center">
+          <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-5 border border-indigo-100">
+            <Sparkles className="w-7 h-7" />
+          </div>
+          <h4 className="text-2xl font-extrabold text-slate-800 mb-2 tracking-tight">31<sup>st</sup> Domahi Arong Aji</h4>
+          <p className="text-slate-500 font-medium max-w-md">
+            Celebrating culture and heritage from 26th to 28th April 2026.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}
